@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <%- include('./blocks/links-header.ejs') %>
+    <% if(users.length == 0){ %>
+        <h1 style="text-align: center;color: red;">
+            У вас еще нет аккаунтов
+        </h1>
+    <% }else{ %>
+        <div>
+            <% for( let i = 0; i < users.length; i++ ) { %>
+                <h3 style="text-align: center;color: rgb(177, 0, 0);"><a href="/account/<%= users[i]%>"><%= users[i] %></a></h3>
+            <% } %>
+        </div>
+    <% } %>
+</body>
+</html>

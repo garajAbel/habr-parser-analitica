@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analitics / Habr</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        #header {
+            background-color: #0a1b2b;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+        }
+        #rating {
+            margin-top: 20px;
+            text-align: center;
+        }
+        a {
+            color: #877ba7f6;
+            text-decoration: none;
+        }
+    </style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .account {
+            background-color: #000;
+            border: 1px solid #ddd;
+            margin: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        .account h5 {
+            color: #fff;
+        }
+        .ratings {
+            color: #fff;
+        }
+        a {
+            color: #0074d9;
+            text-decoration: none;
+        }
+        .sort{
+            display: inline-block;
+            width: 130px;
+            height: 26px;
+            background-color: #0a1b2b;
+            color: antiquewhite;
+            border: #122f49 inherit 4px ;
+            border-radius: 10px ;
+        }
+    </style>
+
+</head>
+<body>
+    <%- include('./blocks/links-header') %>
+    <div style="align-items: center;">
+        <a  href="/update/<%= user.username %>">update</a>
+    </div>
+    
+    <div id="header">
+        <h1><%= user.username %></h1>
+        <div id="rating">
+            <h3>rating :<b><%= user.rating %></b></h3>
+            <h3>karma : <b><%= user.karma %></b></h3>
+        </div>
+        <div>
+            <button class="sort" onclick="sortByRating()" >sort by rating</button>
+            <button class="sort" onclick="sortByComments()">sort by comments</button>
+            <button class="sort" onclick="sortBySaves()" >sort by saves</button>
+        </div>
+        <div id="posts">
+            <% for( let i = 0; i < user.posts.length; i++ ) { %>
+                <div class="account">
+                    <h5><b><a target="_blank" rel="noopener noreferrer" href="https://habr.com<%= user.posts[i].href %>" id="title"><%= user.posts[i].text %></a></b></h5>
+                    <div class="rating">
+                        <div class="block-rating">
+                            <div class="ratings.rating" >рейтинг : <p id="rating" ><%= user.posts[i].rating %></p> </div>
+                            <div class="ratings.save"  >сохранили : <p id="save"><%= user.posts[i].saves %></p> </div>
+                            <div class="ratings.comment" >коментарий : <p id="comment"><%= user.posts[i].comments  %></p></div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+        <script>
+            const posts = document.querySelector("#posts")
+            let data = [] ;
+            const post = posts.querySelectorAll(".account")
+            for(let i = 0;i < post.length;i++){
+                const maket = {
+                    title:post[i].querySelector("#title").textContent,
+                    href:post[i].querySelector("#title").href ,
+                    rating:Number(post[i].querySelector("#rating").textContent),
+                    saves:Number(post[i].querySelector("#save").textContent),
+                    comment:Number(post[i].querySelector("#comment").textContent)
+                }
+                data.push(maket)
+            }
+            sortByRating()
+            function sortByRating(){
+                data.sort(function(a, b) {
+                    return b.rating - a.rating;
+                })
+                update()
+            }
+            function sortByComments(){
+                data.sort(function(a,b){
+                    return b.comment - a.comment
+                })
+                update()
+            }
+            function sortBySaves(){
+                data.sort(function(a,b){
+                    return b.saves - a.saves
+                })
+                update()
+            }
+            
+            function update(){
+                const posts1 = document.getElementById("posts")
+                posts1.remove()
+            
+                const posts_ = document.createElement("div")
+                posts_.id = "posts"
+
+            
+                for(let i =0;i < data.length;i++){
+                    const account = document.createElement("div")
+                    account.id = "account"
+                
+                    const h5 = document.createElement("h5")
+                
+                    const a = document.createElement("a")
+                    a.textContent = data[i].title
+                    a.href = data[i].href
+                    a.rel = "noopener noreferrer"
+                    a.target = "_blank"
+                    a.id = "title"
+                    h5.appendChild(a)
+                    account.appendChild(h5)
+                    //rating
+                    const rating = document.createElement("div")
+                    rating.className = "rating"
+                    const rating_block = document.createElement("div")
+                    rating_block.className = "rating_block"
+
+                    const data_rating = document.createElement("div")
+                    const data_saves = document.createElement("div")
+                    const data_comments = document.createElement("div")
+
+                    data_rating.className = "ratings"
+                    data_rating.textContent = "рейтинг : "
+                    data_saves.className = "ratings"
+                    data_saves.textContent = "сохранили : "
+                    data_comments.className = "ratings"
+                    data_comments.textContent = "комментарий :"
+
+                    const pRating = document.createElement("p")
+                    pRating.className = "ratings"
+                    pRating.textContent = data[i].rating
+                    const pSaves = document.createElement("p")
+                    pSaves.id = "save"
+                    pSaves.textContent = data[i].saves
+                    const pComments = document.createElement("p")
+                    pComments.id = "comment"
+                    pComments.textContent = data[i].comment
+
+
+                    data_rating.appendChild(pRating)
+                    data_saves.appendChild(pSaves)
+                    data_comments.appendChild(pComments)
+                    rating_block.appendChild(data_rating)
+                    rating_block.appendChild(data_saves)
+                    rating_block.appendChild(data_comments)
+                    rating.appendChild(rating_block)
+                    account.appendChild(rating)
+                    posts_.appendChild(account)
+
+                }
+                document.body.appendChild(posts_)
+
+            }
+            
+        </script>
+
+    </div>
+    
+</body>
+</html>
